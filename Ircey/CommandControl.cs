@@ -60,7 +60,7 @@ namespace Ircey
 			for (int i=0;i<sorted.Count;i++) {
 				switch (sorted[i]) {
 				case "-":
-					try { if (eq[i-1].Callsign() == 'c' || i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} } catch { if (i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} }
+					try { if ((eq[i-1].Callsign() == 'c' && ((iContainer)eq[i-1]).open == true) || i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} } catch { if (i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} }
 					break;
 				default:
 					try {
@@ -91,7 +91,8 @@ namespace Ircey
 								}
 							} if(q){continue;}
 							if (!q) {throw new Exception();}
-						} catch {
+						} catch (Exception e) {
+							Console.WriteLine(e);
 							return "Syntax Error";
 						} 
 					}
@@ -105,7 +106,7 @@ namespace Ircey
 #endif
 			iNumber result;
 			try { result = Calculate.IMathematicalList(eq); return result.ToString(); }
-			catch { return "Syntax Error"; }
+			catch (Exception e) {Console.WriteLine(e); return "Syntax Error"; }
 		}
 
 		public string Google (string par) {

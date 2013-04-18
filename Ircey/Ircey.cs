@@ -16,8 +16,8 @@ namespace Ircey
 	class MainThread {
 		public static void Main (string[] args)
 		{
-			//MainThread.StandardInit(args);
-			MainThread.TestInit(args);
+			MainThread.StandardInit(args);
+			//MainThread.TestInit(args);
 		}
 		public static void StandardInit (string[] args) {
 			IRCConfig conf = new IRCConfig();

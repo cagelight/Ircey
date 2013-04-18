@@ -17,34 +17,31 @@ namespace Ircey
 			this.C = p;
 		}
 		public static iNumber operator +(iNumber A, iNumber B){
-			return new iNumber(A.Real + B.Real, A.Imaginary + B.Imaginary);
+			return new iNumber(Complex.Add(A,B));
 		}
 		public static iNumber operator -(iNumber A, iNumber B){
-			return new iNumber(A.Real - B.Real, A.Imaginary - B.Imaginary);
+			return new iNumber(Complex.Subtract(A,B));
 		}
 		public static iNumber operator *(iNumber A, iNumber B){
-			return new iNumber(A.Real * B.Real, A.Imaginary * B.Imaginary);
+			return new iNumber(Complex.Multiply(A,B));
 		}
 		public static iNumber operator /(iNumber A, iNumber B){
-			return new iNumber(A.Real / B.Real, A.Imaginary / B.Imaginary);
+			return new iNumber(Complex.Divide(A,B));
 		}
 		public static iNumber operator +(iNumber A, double B){
-			return new iNumber(A.Real + B);
+			return new iNumber(Complex.Add(A,B));
 		}
 		public static iNumber operator -(iNumber A, double B){
-			return new iNumber(A.Real - B);
+			return new iNumber(Complex.Subtract(A,B));
 		}
 		public static iNumber operator *(iNumber A, double B){
-			return new iNumber(A.Real * B);
+			return new iNumber(Complex.Multiply(A,B));
 		}
 		public static iNumber operator /(iNumber A, double B){
-			return new iNumber(A.Real / B);
+			return new iNumber(Complex.Divide(A,B));
 		}
 		public static implicit operator iNumber(double d){
 			return new iNumber(d);
-		}
-		public static implicit operator double(iNumber i){
-			return i.Real;
 		}
 		public static implicit operator iNumber(Complex p){
 			return new iNumber(p);
@@ -53,12 +50,14 @@ namespace Ircey
 			return i.C;
 		}
 		public override string ToString (){
-			if(Imaginary != 0 && Real != 0) {
-				return String.Format("{0} {2} {1}i", Real, Imaginary.ToString().Trim(new char[]{'-'}), Imaginary>=0?"+":"-");
-			} else if (Real == 0 && Imaginary != 0) {
-				return String.Format("{0}i", Imaginary);
+			string RString = String.Format("{0:#,0.############}", Real);
+			string IString = String.Format("{0:#,0.############}", Imaginary).Trim(new char[]{'-'});
+			if(RString != "0" && IString != "0") {
+				return String.Format("{0} {2} {1}i", RString, IString, Imaginary>=0?"+":"-");
+			} else if (RString == "0" && IString != "0") {
+				return String.Format("{0}i", IString);
 			} else {
-				return String.Format("{0}", Real);
+				return String.Format("{0}", RString);
 			}
 			
 		}
@@ -80,10 +79,10 @@ namespace Ircey
 			return sign;
 		}
 		public char Callsign() {return 'o';}
-		public static iOperator Addition = new iOperator("+", new Func<iNumber,iNumber,iNumber>((a,b)=>a+b));
-		public static iOperator Subtraction = new iOperator("-", new Func<iNumber,iNumber,iNumber>((a,b)=>a-b));
-		public static iOperator Multiplication = new iOperator("*", new Func<iNumber,iNumber,iNumber>((a,b)=>a*b));
-		public static iOperator Division = new iOperator("/", new Func<iNumber,iNumber,iNumber>((a,b)=>a/b));
+		public static iOperator Addition = new iOperator("+", new Func<iNumber,iNumber,iNumber>((a,b)=>Complex.Add(a,b)));
+		public static iOperator Subtraction = new iOperator("-", new Func<iNumber,iNumber,iNumber>((a,b)=>Complex.Subtract(a,b)));
+		public static iOperator Multiplication = new iOperator("*", new Func<iNumber,iNumber,iNumber>((a,b)=>Complex.Multiply(a,b)));
+		public static iOperator Division = new iOperator("/", new Func<iNumber,iNumber,iNumber>((a,b)=>Complex.Divide(a,b)));
 		public static iOperator Power = new iOperator("^", new Func<iNumber,iNumber,iNumber>((a,b)=>Complex.Pow(a,b)));
 		public static iOperator[] StandardOperators = new iOperator[] {Addition, Subtraction, Multiplication, Division, Power};
 	}
@@ -102,7 +101,7 @@ namespace Ircey
 			return sign;
 		}
 		public char Callsign() {return 'f';}
-		public static iFunction Negative = new iFunction("-", new Func<iNumber,iNumber>((a)=>-a));
+		public static iFunction Negative = new iFunction("-", new Func<iNumber,iNumber>((a)=>Complex.Negate(a)));
 		public static iFunction Sqrt = new iFunction("sqrt", new Func<iNumber,iNumber>((a)=>Complex.Sqrt(a)));
 		public static iFunction Sin = new iFunction("sin", new Func<iNumber,iNumber>((a)=>Complex.Sin(a)));
 		public static iFunction Cos = new iFunction("cos", new Func<iNumber,iNumber>((a)=>Complex.Cos(a)));
@@ -128,19 +127,56 @@ namespace Ircey
 
 	public static class Calculate {
 		public static iNumber IMathematicalList (List<IMathematical> list) {
+			list.Insert(0,iContainer.OpenParentheses);
+			list.Add(iContainer.CloseParentheses);
 			short oi = -1;
 			short ci = -1;
-			for (short c=0;c<list.Count;c++) {
-				if(list[c].Callsign() == 'c' && ((iContainer)list[c]).open == false) {
-					ci = c; break;
+			while (true) {
+				for (short c=0;c<list.Count;c++) {
+					if(list[c].Callsign() == 'c' && ((iContainer)list[c]).open == false) {
+						ci = c; break;
+					}
+				}
+				for (short o=ci;o<list.Count;o--) {
+					if(list[o].Callsign() == 'c' && ((iContainer)list[o]).open == true) {
+						oi = o; break;
+					}
+				}
+					bool solved = false;
+					short wint=oi;wint++;
+					while (!solved) {
+					if (list[wint].Callsign()=='n')  {
+						wint++;
+					} else if (list[wint].Callsign()=='f') {
+						list[wint+1] = ((iFunction)list[wint]).Operate((iNumber)list[wint+1]);
+						list.RemoveAt(wint);
+					} else if (list[wint].Callsign()=='o') {
+						if (list[wint+1].Callsign() == 'f') {
+							list[wint+2] = ((iFunction)list[wint+1]).Operate((iNumber)list[wint+2]);
+							list.RemoveAt(wint+1);
+						}
+						if (list[wint+1].Callsign() == 'n') {
+							list[wint-1] = ((iOperator)list[wint]).Operate((iNumber)list[wint-1],(iNumber)list[wint+1]);
+							list.RemoveAt(wint);
+							list.RemoveAt(wint);
+						}
+					} else if (list[wint].Callsign()=='c') {
+						if(list[wint-2].Callsign()=='c') {
+							solved=true;list.RemoveAt(wint);
+							list.RemoveAt(wint-2);
+						} else if(list[wint-1].Callsign()=='c'){
+							solved=true;
+							list.RemoveAt(wint);
+							list.RemoveAt(wint-1);
+						}
+					} else {throw new Exception();}
+				}
+				if (list.Count == 1) {
+					return (iNumber)list[0];
+				} else {
+					continue;
 				}
 			}
-			for (short o=ci;o<list.Count;o++) {
-				if(list[o].Callsign() == 'c' && ((iContainer)list[o]).open == true) {
-					oi = o; break;
-				}
-			}
-			return iOperator.Subtraction.Operate(iFunction.Sqrt.Operate(-6D), new iNumber(3D, 60D));
 		}
 	}
 }
