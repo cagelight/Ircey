@@ -58,15 +58,15 @@ namespace Ircey
 			sorted.RemoveAll(emptykiller);
 			List<IMathematical> eq = new List<IMathematical>();
 			for (int i=0;i<sorted.Count;i++) {
-				try {
-					eq.Add(new iNumber(Convert.ToDouble(sorted[i])));
-				} catch {
+				switch (sorted[i]) {
+				case "-":
+					try { if (eq[i-1].Callsign() == 'c' || i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} } catch { if (i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} }
+					break;
+				default:
 					try {
-						switch (sorted[i]) {
-						case "-":
-							try { if (eq[i-1].Callsign() == 'c') {eq.Add(iFunction.Negative);} } catch { if (i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} }
-							break;
-						default:
+						eq.Add(new iNumber(Convert.ToDouble(sorted[i])));
+					} catch {
+						try {
 							bool q = false;
 							foreach (iContainer co in iContainer.StandardContainers) {
 								if (sorted[i] == co.sign) {
@@ -90,11 +90,12 @@ namespace Ircey
 									break;
 								}
 							} if(q){continue;}
-							break;
-						}
-					} catch {
-						return "Syntax Error";
+							if (!q) {throw new Exception();}
+						} catch {
+							return "Syntax Error";
+						} 
 					}
+					break;
 				}
 			}
 #if DEBUG
