@@ -54,9 +54,56 @@ namespace Ircey
 		}
 
 		public string Calc (string args) {
-			string[] sorted = Regex.Split(args, "(\\()|(\\))|(\\+)|(-)|(\\*)|(\\/)|(\\^)");
+			List<string> sorted = new List<string>(); sorted.AddRange(Regex.Split(args, "(\\()|(\\))|(\\+)|(-)|(\\*)|(\\/)|(\\^)"));
+			sorted.RemoveAll(emptykiller);
+			List<IMathematical> eq = new List<IMathematical>();
+			for (int i=0;i<sorted.Count;i++) {
+				try {
+					eq.Add(new iNumber(Convert.ToDouble(sorted[i])));
+				} catch {
+					try {
+						switch (sorted[i]) {
+						case "-":
+							try { if (eq[i-1].Callsign() == 'c') {eq.Add(iFunction.Negative);} } catch { if (i == 0) {eq.Add(iFunction.Negative);} else {eq.Add(iOperator.Subtraction);} }
+							break;
+						default:
+							bool q = false;
+							foreach (iContainer co in iContainer.StandardContainers) {
+								if (sorted[i] == co.sign) {
+									eq.Add(co);
+									q = true;
+									break;
+								}
+							} if(q){continue;}
+							foreach (iFunction fu in iFunction.StandardFunctions) {
+								if (sorted[i] == fu.sign) {
+									eq.Add(fu);
+									q = true;
+									break;
+								}
+							} if(q){continue;}
+
+							foreach (iOperator op in iOperator.StandardOperators) {
+								if (sorted[i] == op.sign) {
+									eq.Add(op);
+									q = true;
+									break;
+								}
+							} if(q){continue;}
+							break;
+						}
+					} catch {
+						return "Syntax Error";
+					}
+				}
+			}
+#if DEBUG
+			foreach (IMathematical m in eq) {
+				Console.WriteLine(m.ToString() + " " + m.Callsign());
+			}
+#endif
 			iNumber result;
-			try { result = Calculate.IMathematicalList(null); return result.ToString(); }
+			try { result = Calculate.IMathematicalList(eq); return result.ToString(); }
 			catch { return "Syntax Error"; }
 		}
 

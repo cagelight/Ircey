@@ -73,6 +73,7 @@ namespace Ircey
 		public static iOperator Multiplication = new iOperator("*", new Func<iNumber,iNumber,iNumber>((a,b)=>a*b));
 		public static iOperator Division = new iOperator("/", new Func<iNumber,iNumber,iNumber>((a,b)=>a/b));
 		public static iOperator Power = new iOperator("^", new Func<iNumber,iNumber,iNumber>((a,b)=>Math.Pow(a,b)));
+		public static iOperator[] StandardOperators = new iOperator[] {Addition, Subtraction, Multiplication, Division, Power};
 	}
 
 	public struct iFunction : IMathematical {
@@ -89,6 +90,9 @@ namespace Ircey
 			return sign;
 		}
 		public char Callsign() {return 'f';}
+		public static iFunction Negative = new iFunction("-", new Func<iNumber,iNumber>((a)=>-a));
+		public static iFunction Sqrt = new iFunction("sqrt", new Func<iNumber,iNumber>((a)=>Math.Sqrt(a)));
+		public static iFunction[] StandardFunctions = new iFunction[] {Negative, Sqrt};
 	}
 
 	public struct iContainer : IMathematical {
@@ -102,6 +106,9 @@ namespace Ircey
 			return sign;
 		}
 		public char Callsign() {return 'c';}
+		public static iContainer OpenParentheses = new iContainer("(", true);
+		public static iContainer CloseParentheses = new iContainer(")", false);
+		public static iContainer[] StandardContainers = new iContainer[] {OpenParentheses, CloseParentheses};
 	}
 
 	public static class Calculate {
