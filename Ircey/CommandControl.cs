@@ -24,16 +24,16 @@ namespace Ircey
 			case "win":
 				return F("PRIVMSG {0} {1}", channel, "A strange game. The only winning move is not to play.");
 			case "ircey":
-				return F("PRIVMSG {0} Fuck You {1}.", channel, divargs[0].Split(new char[]{'!'})[0]);
+				return F("PRIVMSG {0} Fuck You {1}.", channel, divargs[0].Split(new char[]{'!',})[0].Trim(new char[]{':',' '}));
 			case "dice":
 				try {
 					try {
-						return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!'})[0], new Random().Next(Convert.ToInt32(divargs[4]),Convert.ToInt32(divargs[5])+1).ToString());
+						return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!',})[0].Trim(new char[]{':',' '}), new Random().Next(Convert.ToInt32(divargs[4]),Convert.ToInt32(divargs[5])+1).ToString());
 					} catch {
-						return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!'})[0], new Random().Next(1,Convert.ToInt32(divargs[4])+1).ToString());
+						return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!',})[0].Trim(new char[]{':',' '}), new Random().Next(1,Convert.ToInt32(divargs[4])+1).ToString());
 					}
 				} catch {
-					return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!'})[0], new Random().Next(1,7).ToString());
+					return F("PRIVMSG {0} {1} rolls the dice! {2}!", channel, divargs[0].Split(new char[]{'!',})[0].Trim(new char[]{':',' '}), new Random().Next(1,7).ToString());
 				}
 			case "coin":
 				string coin;
