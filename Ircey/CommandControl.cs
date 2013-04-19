@@ -7,11 +7,13 @@ namespace Ircey
 {
 	public delegate string FormatDelegate (string format, params string[] list);
 	public class CommandControl {
+		StopwatchManager SM = new StopwatchManager();
 		public readonly string channel;
 		FormatDelegate F = new FormatDelegate(String.Format);
 		WebClient CLI = new WebClient();
 		public CommandControl (string channel) {
 			this.channel = channel;
+
 		}
 		public string CommandSwitch (string cmd, string fuseargs, string[] divargs) {
 			switch (cmd) {
@@ -49,12 +51,24 @@ namespace Ircey
 				} catch {
 					return 	F("PRIVMSG {0} {1}", channel, "Google Search Failed");
 				}
+			case "stopwatch":
+				try {
+					if (SM.LookupStopwatch(fuseargs)) {
+						TimeSpan dtDelta = SM.StopStopwatch(fuseargs);
+						return F("PRIVMSG {0} {1}", channel, F("Stopwatch {0} Stopped: {1} Hours, {2} Minutes, {3} Seconds, {4} Milliseconds", fuseargs,  dtDelta.Hours.ToString(), dtDelta.Minutes.ToString(), dtDelta.Seconds.ToString(), dtDelta.Milliseconds.ToString()));
+					} else {
+						SM.StartStopwatch(fuseargs);
+						return F("PRIVMSG {0} Stopwatch {1} Started", channel, fuseargs);
+					}
+				} catch {
+					return F("PRIVMSG {0} {1}", channel, "Stopwatch Operation Failed");
+				}
 			}
 			return F("PRIVMSG {0} {1}", channel, "Unknown Command");
 		}
 
 		public string Calc (string args) {
-			List<string> sorted = new List<string>(); sorted.AddRange(Regex.Split(args, "(\\()|(\\))|(\\+)|(-)|(\\*)|(\\/)|(\\^)"));
+			List<string> sorted = new List<string>(); sorted.AddRange(Regex.Split(args.Replace(" ",""), "(\\()|(\\))|(\\+)|(-)|(\\*)|(\\/)|(\\^)"));
 			sorted.RemoveAll(emptykiller);
 			List<IMathematical> eq = new List<IMathematical>();
 			for (int i=0;i<sorted.Count;i++) {
