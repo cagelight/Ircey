@@ -5,7 +5,7 @@ namespace Ircey
 	public static class RandomMessage
 	{
 		private static Random wordRND = new Random(DateTime.Now.Millisecond);
-		public static string[] adjectiveiest = new string[]{"Prettiest", "Shittiest", "Coolest", "Hottest", "Fastest", "Slowest", "Ugliest", "Gayest", "Hardest", "Softest"};
+		public static string[] adjectiveiest = new string[]{"Prettiest", "Shittiest", "Coolest", "Hottest", "Fastest", "Slowest", "Ugliest", "Gayest", "Hardest", "Softest", "Sexiest"};
 		public static string[] adjective = new string[]{"Red", "Blue", "Green", "Soft", "Hard", "Ugly", "Pretty", "Stupid", "Smart", "Dumb"};
 		public static string[] kineticverbs = new string[]{"Force", "Kick", "Push", "Throw", "Toss", "Place", "Set"};
 		public static string[] nonkineticverbs = new string[]{"Kill", "Punch", "Kick", "Destroy", "Decimate", "Obliterate", "Annihilate", "Smash"};
@@ -13,8 +13,20 @@ namespace Ircey
 		public static string[] pluralnouns = new string[]{"Potatoes", "Vacuum tubes", "Chicken nuggets", "Motherboards", "Processors", "C# programs", "Meteors", "Bananas", "Dogs", "Cats", "Lizards", "Swords", "Knives", "Dicks", "Girls", "Boxes"};
 		public static string[] propernounslocations = new string[] {"North Korea", "The United States of America", "France", "Germany", "Spain", "The United Kingdom", "Russia", "The Czech Republic", "Japan", "Belarus"};
 		public static string[] propernounsnames = new string[] {"Bill Gates", "Steve Jobs", "George Washington", "Kim Il-Sung", "Kim Jong-Un", "Vladimir Putin", "Jesus Christ", "God", "Barack Obama", "Adolf Hitler", "Fidel Castro"};
+		public static string ContextualNew (string context) {
+			if (context.ToLower().Contains("star")) {
+				double starweight = wordRND.NextDouble();
+				if (starweight < 0.10) {
+					return String.Format("I am currently orbiting a {0}, are these supposed to exist?", GenerateStar.GenerateFictional());
+				} else {
+					return String.Format("I am currently orbiting a {0}.", GenerateStar.GenerateWeightedRandom(0.9));
+				}
+			} else {
+				return New ();
+			}
+		}
 		public static string New () {
-			int responseindex = wordRND.Next(0,7);
+			int responseindex = wordRND.Next(0,6);
 			switch (responseindex) {
 			case 0:
 				double starweight = wordRND.NextDouble();

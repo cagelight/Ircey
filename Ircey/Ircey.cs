@@ -22,8 +22,8 @@ namespace Ircey
 	{
 		public static void Main (string[] args)
 		{
-			MainThread.StandardInit (args);
-			//MainThread.TestInit(args);
+			//MainThread.StandardInit (args);
+			MainThread.TestInit(args);
 		}
 
 		public static void StandardInit (string[] args)
@@ -49,6 +49,13 @@ namespace Ircey
 				I = new Ircey (conf, null);
 			}
 			Console.WriteLine ("Bot quit/crashed");
+		}
+
+		public static void TestInit (string[] args) {
+			while (true) {
+				Console.ReadLine();
+				Console.WriteLine(WordFront.RandomAdjective());
+			}
 		}
 	}
 

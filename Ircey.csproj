@@ -40,6 +40,8 @@
     <Compile Include="Ircey\Math.cs" />
     <Compile Include="Ircey\Stopwatch.cs" />
     <Compile Include="Ircey\RandomMessage.cs" />
+    <Compile Include="Ircey\SmartWord.cs" />
+    <Compile Include="Ircey\SmartEnglish.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
