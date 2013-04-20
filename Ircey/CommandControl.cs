@@ -21,6 +21,8 @@ namespace Ircey
 				return F("PRIVMSG {0} {1}",channel, divargs[4]);
 			case "math":
 				return F("PRIVMSG {0} {1}", channel, Calc(fuseargs));
+			case "calc":
+				return F("PRIVMSG {0} {1}", channel, Calc(fuseargs));
 			case "ping":
 				return F("PRIVMSG {0} {1}", channel, "pong");
 			case "win":

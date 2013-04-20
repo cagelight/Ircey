@@ -37,9 +37,9 @@
   <ItemGroup>
     <Compile Include="Ircey\Properties\AssemblyInfo.cs" />
     <Compile Include="Ircey\Ircey.cs" />
-    <Compile Include="Ircey\CommandControl.cs" />
     <Compile Include="Ircey\Math.cs" />
     <Compile Include="Ircey\Stopwatch.cs" />
+    <Compile Include="Ircey\RandomMessage.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

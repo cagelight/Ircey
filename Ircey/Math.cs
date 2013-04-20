@@ -148,8 +148,15 @@ namespace Ircey
 					if (list[wint].Callsign()=='n')  {
 						wint++;
 					} else if (list[wint].Callsign()=='f') {
-						list[wint+1] = ((iFunction)list[wint]).Operate((iNumber)list[wint+1]);
-						list.RemoveAt(wint);
+						if (list[wint+1].Callsign() == 'n'){
+							list[wint+1] = ((iFunction)list[wint]).Operate((iNumber)list[wint+1]);
+							list.RemoveAt(wint);
+						} else {
+							list[wint+2] = ((iFunction)list[wint+1]).Operate((iNumber)list[wint+2]);
+							list.RemoveAt(wint+1);
+							list[wint+1] = ((iFunction)list[wint]).Operate((iNumber)list[wint+1]);
+							list.RemoveAt(wint);
+						}
 					} else if (list[wint].Callsign()=='o') {
 						if (list[wint+1].Callsign() == 'f') {
 							list[wint+2] = ((iFunction)list[wint+1]).Operate((iNumber)list[wint+2]);
