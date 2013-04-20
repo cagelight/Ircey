@@ -161,7 +161,7 @@ namespace Ircey
 
 		public void CommandSwitch (string cmd, string fuseargs, string[] divargs, string wholemessage)
 		{
-			if (wholemessage.ToLower().Contains("ircey")) {
+			if (wholemessage.ToLower().Contains("ircey") && !divargs[0].ToLower().Contains(config.server)) {
 				sendData (F ("PRIVMSG {0} {1}, {2}", channel, divargs [0].Split (new char[]{'!'}) [0].Trim (new char[] {':',' '}), RandomMessage.New()));
 			} else {
 				switch (cmd) {
@@ -237,6 +237,9 @@ namespace Ircey
 					break;
 				case "!star":
 					sendData(F("PRIVMSG {0} {1}", channel, GenerateStar.GenerateStandard()));
+					break;
+				case "!fstar":
+					sendData(F("PRIVMSG {0} {1}", channel, GenerateStar.GenerateFictional()));
 					break;
 				}
 			}
